@@ -64,7 +64,8 @@ export default function App() {
           smallWins: entryData.smallWins,
           gratitude: entryData.gratitude,
           selfEsteem: entryData.selfEsteem,
-          futureSelfMessage: entryData.futureSelfMessage
+          futureSelfMessage: entryData.futureSelfMessage,
+          apiKeyOverride: profile.apiKeyOverride
         })
       });
 
