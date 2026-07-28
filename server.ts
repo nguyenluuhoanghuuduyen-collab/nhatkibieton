@@ -12,8 +12,8 @@ const PORT = 3000;
 app.use(express.json());
 
 // Initialize Gemini Client
-const getGeminiClient = () => {
-  const apiKey = process.env.GEMINI_API_KEY;
+const getGeminiClient = (apiKeyOverride?: string) => {
+  const apiKey = apiKeyOverride || process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return null;
   }
@@ -30,9 +30,9 @@ const getGeminiClient = () => {
 // API Endpoint: AI Reflection (Phản hồi tâm lý & thần kinh thấu cảm)
 app.post("/api/reflect", async (req, res) => {
   try {
-    const { mood, smallWins, gratitude, selfEsteem, futureSelfMessage } = req.body;
+    const { mood, smallWins, gratitude, selfEsteem, futureSelfMessage, apiKeyOverride } = req.body;
 
-    const ai = getGeminiClient();
+    const ai = getGeminiClient(apiKeyOverride);
     if (!ai) {
       return res.status(200).json({
         reflection: "Cảm ơn bạn đã dành thời gian ghi chép nhật ký hôm nay! Việc thực hành nhận diện cảm xúc và trân trọng những điều nhỏ bé chính là bước đi vững chắc để rèn luyện sự dẻo dai thần kinh (Neuroplasticity). Hãy tiếp tục nuôi dưỡng thói quen này mỗi ngày cùng nguyên tắc 3K nhé!",
@@ -81,8 +81,8 @@ Yêu cầu lời phản hồi:
 // API Endpoint: Gợi ý câu hỏi truyền cảm hứng (Prompt Inspiration)
 app.post("/api/prompt-idea", async (req, res) => {
   try {
-    const { mood, week } = req.body;
-    const ai = getGeminiClient();
+    const { mood, week, apiKeyOverride } = req.body;
+    const ai = getGeminiClient(apiKeyOverride);
 
     if (!ai) {
       return res.json({
