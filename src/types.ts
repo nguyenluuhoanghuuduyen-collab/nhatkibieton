@@ -26,6 +26,7 @@ export interface JournalEntry {
   gratitude: GratitudeTarget; // Oxytocin social connection
   selfEsteem: string; // Resilience & self achievement
   futureSelfMessage: string; // Optimism message to future self
+  privateNotes?: string; // Free-writing private diary (stored locally only)
   aiReflection?: string;
   tags?: string[];
   isFavorite?: boolean;
@@ -33,6 +34,11 @@ export interface JournalEntry {
 
 export interface UserProfile {
   anonymousId: string;
+  studentName?: string;
+  studentClass?: string;
+  studentSchool?: string;
+  personalTarget?: string;
+  apiKeyOverride?: string;
   currentWeek: number; // 1 to 12
   startDate: string;
   streakDays: number;
