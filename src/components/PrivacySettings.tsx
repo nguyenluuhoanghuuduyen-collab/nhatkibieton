@@ -10,7 +10,8 @@ import {
   Trash2,
   CheckCircle2,
   AlertCircle,
-  KeyRound
+  KeyRound,
+  User
 } from 'lucide-react';
 
 interface PrivacySettingsProps {
@@ -29,6 +30,41 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
   const [pinMessage, setPinMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const [importStatus, setImportStatus] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Student Profile state
+  const [studentName, setStudentName] = useState(profile.studentName || '');
+  const [studentClass, setStudentClass] = useState(profile.studentClass || '');
+  const [studentSchool, setStudentSchool] = useState(profile.studentSchool || '');
+  const [personalTarget, setPersonalTarget] = useState(profile.personalTarget || '');
+  const [profileMessage, setProfileMessage] = useState<string | null>(null);
+
+  // API Key state
+  const [apiKeyOverride, setApiKeyOverride] = useState(profile.apiKeyOverride || '');
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [apiMessage, setApiMessage] = useState<string | null>(null);
+
+  const handleSaveProfileInfo = () => {
+    const updated: UserProfile = {
+      ...profile,
+      studentName: studentName.trim() || undefined,
+      studentClass: studentClass.trim() || undefined,
+      studentSchool: studentSchool.trim() || undefined,
+      personalTarget: personalTarget.trim() || undefined,
+    };
+    onUpdateProfile(updated);
+    setProfileMessage('Đã cập nhật thông tin học sinh thành công!');
+    setTimeout(() => setProfileMessage(null), 3000);
+  };
+
+  const handleSaveApiKey = () => {
+    const updated: UserProfile = {
+      ...profile,
+      apiKeyOverride: apiKeyOverride.trim() || undefined
+    };
+    onUpdateProfile(updated);
+    setApiMessage('Đã cập nhật Gemini API Key thành công!');
+    setTimeout(() => setApiMessage(null), 3000);
+  };
 
   // Set or change PIN code
   const handleSavePin = () => {
@@ -110,6 +146,127 @@ export const PrivacySettings: React.FC<PrivacySettingsProps> = ({
           <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-md border border-emerald-300">
             Không PII (No Personal Data)
           </span>
+        </div>
+      </div>
+
+      {/* Student Profile Card */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <User className="w-5 h-5 text-teal-600" />
+          <h3 className="text-base font-bold text-slate-800">
+            Thông tin cá nhân Học sinh
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Họ và tên học sinh:</label>
+            <input
+              type="text"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+              placeholder="Ví dụ: Nguyễn Văn A"
+              className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50/50"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Lớp:</label>
+            <input
+              type="text"
+              value={studentClass}
+              onChange={(e) => setStudentClass(e.target.value)}
+              placeholder="Ví dụ: 10A1"
+              className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50/50"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Trường:</label>
+            <input
+              type="text"
+              value={studentSchool}
+              onChange={(e) => setStudentSchool(e.target.value)}
+              placeholder="Ví dụ: THPT Chuyên Nguyễn Du"
+              className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50/50"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">Mục tiêu rèn luyện 12 tuần của bạn:</label>
+          <input
+            type="text"
+            value={personalTarget}
+            onChange={(e) => setPersonalTarget(e.target.value)}
+            placeholder="Ví dụ: Rèn luyện thói quen tư duy tích cực, giảm căng thẳng học tập..."
+            className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50/50"
+          />
+        </div>
+
+        <div className="flex items-center justify-between pt-2">
+          <button
+            onClick={handleSaveProfileInfo}
+            className="text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl shadow-xs transition-all"
+          >
+            Lưu thông tin
+          </button>
+          {profileMessage && (
+            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
+              <CheckCircle2 className="w-4 h-4" /> {profileMessage}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* API Key Setup Card */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <KeyRound className="w-5 h-5 text-teal-600" />
+          <h3 className="text-base font-bold text-slate-800">
+            Cài đặt Google Gemini API Key cá nhân
+          </h3>
+        </div>
+
+        <p className="text-xs text-slate-600 leading-relaxed">
+          Ứng dụng sử dụng mô hình AI của Google để phân tích phản hồi tâm lý. Bạn có thể sử dụng API Key mặc định của ứng dụng, hoặc cấu hình API Key cá nhân của riêng bạn bên dưới (khóa sẽ được lưu cục bộ trên thiết bị của bạn).
+        </p>
+
+        <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Gemini API Key cá nhân:</label>
+            <div className="flex gap-2">
+              <input
+                type={showApiKey ? "text" : "password"}
+                value={apiKeyOverride}
+                onChange={(e) => setApiKeyOverride(e.target.value)}
+                placeholder="AIzaSy..."
+                className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 bg-slate-50/50 font-mono"
+              />
+              <button
+                type="button"
+                onClick={() => setShowApiKey(!showApiKey)}
+                className="text-xs bg-slate-100 hover:bg-slate-200 border border-slate-200 px-3 rounded-xl transition-all"
+              >
+                {showApiKey ? "Ẩn" : "Hiện"}
+              </button>
+            </div>
+          </div>
+          <p className="text-[11px] text-slate-500 leading-relaxed">
+            Bạn chưa có API Key? Hãy lấy khóa miễn phí tại <a href="https://aistudio.google.com/" target="_blank" rel="noopener noreferrer" className="text-teal-600 font-bold underline hover:text-teal-700">Google AI Studio</a>.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between pt-2">
+          <button
+            onClick={handleSaveApiKey}
+            className="text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl shadow-xs transition-all"
+          >
+            Lưu API Key
+          </button>
+          {apiMessage && (
+            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
+              <CheckCircle2 className="w-4 h-4" /> {apiMessage}
+            </span>
+          )}
         </div>
       </div>
 
