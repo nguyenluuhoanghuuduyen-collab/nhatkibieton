@@ -46,6 +46,9 @@ export const JournalWizard: React.FC<JournalWizardProps> = ({
   // Step 4: Future Self (Optimism)
   const [futureSelfMessage, setFutureSelfMessage] = useState('');
 
+  // Step 5: Private Notes
+  const [privateNotes, setPrivateNotes] = useState('');
+
   // UI state
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [showPromptChips, setShowPromptChips] = useState(true);
@@ -108,6 +111,7 @@ export const JournalWizard: React.FC<JournalWizardProps> = ({
       },
       selfEsteem: selfEsteem.trim() || 'Hôm nay mình đã kiên trì rèn luyện sức khỏe tinh thần.',
       futureSelfMessage: futureSelfMessage.trim() || 'Cố gắng lên nhé! Bạn đang làm rất tốt.',
+      privateNotes: privateNotes.trim() || undefined,
       tags: ['Nhật ký biết ơn', `Tuần ${profile.currentWeek}`]
     };
 
@@ -117,6 +121,20 @@ export const JournalWizard: React.FC<JournalWizardProps> = ({
       onRequestAIReflection(newEntry);
     }
 
+    // Reset fields after successful submit
+    setMood('joy');
+    setMoodNote('');
+    setSmallWin1('');
+    setSmallWin2('');
+    setSmallWin3('');
+    setAdditionalWins([]);
+    setGratitudeTarget('');
+    setGratitudeReason('');
+    setSelfEsteem('');
+    setFutureSelfMessage('');
+    setPrivateNotes('');
+    setCurrentStep(0);
+
     setIsSubmitting(false);
   };
 
@@ -125,15 +143,15 @@ export const JournalWizard: React.FC<JournalWizardProps> = ({
       {/* Step Indicator Header */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <div className="flex items-center justify-between text-xs font-semibold text-slate-600 mb-2">
-          <span>Quy trình Thực hành Chuyên sâu 4 Bước</span>
+          <span>Quy trình Thực hành Chuyên sâu 5 Bước</span>
           <span className="text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
-            Bước {currentStep + 1} / 5
+            Bước {currentStep + 1} / 6
           </span>
         </div>
 
         {/* Step Progress Bar */}
-        <div className="grid grid-cols-5 gap-1.5 h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-          {[0, 1, 2, 3, 4].map((stepIdx) => (
+        <div className="grid grid-cols-6 gap-1.5 h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+          {[0, 1, 2, 3, 4, 5].map((stepIdx) => (
             <button
               key={stepIdx}
               onClick={() => setCurrentStep(stepIdx)}
@@ -156,6 +174,7 @@ export const JournalWizard: React.FC<JournalWizardProps> = ({
           <span className={currentStep === 2 ? 'text-teal-700 font-bold' : ''}>2. Oxytocin</span>
           <span className={currentStep === 3 ? 'text-teal-700 font-bold' : ''}>3. Resilience</span>
           <span className={currentStep === 4 ? 'text-teal-700 font-bold' : ''}>4. Optimism</span>
+          <span className={currentStep === 5 ? 'text-teal-700 font-bold' : ''}>5. Private</span>
         </div>
       </div>
 
@@ -540,20 +559,84 @@ export const JournalWizard: React.FC<JournalWizardProps> = ({
             />
           </div>
 
+          <div className="flex justify-between items-center pt-2">
+            <button
+              type="button"
+              onClick={() => setCurrentStep(3)}
+              className="text-xs text-slate-600 hover:text-slate-900 font-medium px-4 py-2"
+            >
+              ← Quay lại
+            </button>
+            <button
+              type="button"
+              disabled={!isStepValid(4)}
+              onClick={() => setCurrentStep(5)}
+              className={`text-xs font-bold px-6 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2 ${
+                isStepValid(4)
+                  ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+              }`}
+            >
+              <span>Tiếp tục (Bước 5: Nhật ký riêng tư)</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 5: PRIVATE DIARY NOTES (Nhật ký riêng tư) */}
+      {currentStep === 5 && (
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+          <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-pink-100 text-pink-800">
+                  <Heart className="w-4 h-4 text-pink-600 fill-pink-500" />
+                </div>
+                <span className="text-xs font-bold text-pink-800 uppercase tracking-wider">
+                  Bước 5: Nhật ký riêng tư (Viết tự do)
+                </span>
+              </div>
+              <h3 className="text-base font-bold text-slate-800 mt-1">
+                Tâm sự tự do & Trải lòng cá nhân
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Nơi bạn có thể tự do viết bất cứ điều gì thầm kín mà không lo bị phán xét.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="bg-pink-50/70 p-3.5 rounded-xl border border-pink-200/80 text-xs text-pink-950 leading-relaxed flex items-start gap-2.5">
+              <ShieldCheck className="w-5 h-5 text-pink-700 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold">Cam kết Bảo mật Tuyệt đối:</span> Nội dung trong phần viết tự do này sẽ **CHỈ được lưu cục bộ trên thiết bị của bạn**. Ứng dụng sẽ tự động loại bỏ nội dung này trước khi gửi dữ liệu lên AI của Google để phân tích phản hồi, đảm bảo các bí mật cá nhân của học sinh không bao giờ bị truyền tải lên mạng.
+              </div>
+            </div>
+
+            <textarea
+              rows={5}
+              value={privateNotes}
+              onChange={(e) => setPrivateNotes(e.target.value)}
+              placeholder="Hôm nay của bạn thế nào? Có tâm sự hay bí mật gì muốn viết ra không? Viết tự do tại đây nhé..."
+              className="w-full text-xs p-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 bg-slate-50/50"
+            />
+          </div>
+
           {/* Submission Options */}
           <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3">
             <button
               type="button"
-              onClick={() => setCurrentStep(3)}
+              onClick={() => setCurrentStep(4)}
               className="text-xs text-slate-600 hover:text-slate-900 font-medium px-4 py-2 self-start sm:self-auto"
             >
-              ← Quay lại Bước 3
+              ← Quay lại Bước 4
             </button>
 
             <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
               <button
                 type="button"
-                disabled={isSubmitting || !isStepValid(4)}
+                disabled={isSubmitting}
                 onClick={() => handleSubmit(false)}
                 className="w-full sm:w-auto text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 px-5 py-2.5 rounded-xl transition-all inline-flex items-center justify-center gap-2"
               >
@@ -563,7 +646,7 @@ export const JournalWizard: React.FC<JournalWizardProps> = ({
 
               <button
                 type="button"
-                disabled={isSubmitting || !isStepValid(4)}
+                disabled={isSubmitting}
                 onClick={() => handleSubmit(true)}
                 className="w-full sm:w-auto text-xs font-bold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 px-6 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition-all inline-flex items-center justify-center gap-2"
               >
