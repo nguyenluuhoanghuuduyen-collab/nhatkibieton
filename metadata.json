@@ -1,0 +1,6 @@
+{
+  "name": "Nhật ký biết ơn - Behavioral EdTech",
+  "description": "Ứng dụng Nhật ký biết ơn khoa học cho học sinh dựa trên Tâm lý học tích cực, Khoa học thần kinh và Nguyên tắc 3K (Không áp lực - Không phán xét - Kiên trì).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
