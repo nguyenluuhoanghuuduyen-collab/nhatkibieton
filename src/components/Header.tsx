@@ -49,10 +49,16 @@ export const Header: React.FC<HeaderProps> = ({
               <span>{profile.streakDays} Ngày thực hành</span>
             </div>
 
-            {/* Anonymous ID Badge */}
+            {/* Anonymous ID / Student Name Badge */}
             <div className="flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-full font-medium">
               <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
-              <span className="font-mono text-[11px] font-semibold">{profile.anonymousId}</span>
+              {profile.studentName ? (
+                <span className="font-semibold text-[11px] text-slate-700">
+                  {profile.studentName}{profile.studentClass ? ` (${profile.studentClass})` : ''}
+                </span>
+              ) : (
+                <span className="font-mono text-[11px] font-semibold">{profile.anonymousId}</span>
+              )}
             </div>
 
             {/* Privacy Lock Button */}
